@@ -106,4 +106,46 @@ describe('Express Integration', function () {
       done()
     })
   })
+
+  it('should pass a request stream error to next and drain the request', function (done) {
+    var upload = multer()
+    var router = new express.Router()
+    var form = new FormData()
+
+    var routeCalled = 0
+    var errorCalled = 0
+
+    form.append('avatar', util.file('large.jpg'))
+
+    router.post('/req-error', function (req, res, next) {
+      upload.single('avatar')(req, res, next)
+      setImmediate(function () {
+        req.emit('error', new Error('Simulated request error'))
+      })
+    }, function (req, res) {
+      routeCalled++
+      res.status(200).end('SUCCESS')
+    })
+
+    router.use(function (err, req, res, next) {
+      assert.strictEqual(err.message, 'Simulated request error')
+      assert.ok(Array.isArray(err.storageErrors))
+      assert.strictEqual(req.readable, false)
+
+      errorCalled++
+      res.status(500).end('ERROR')
+    })
+
+    app.use('/t3', router)
+    submitForm(form, '/t3/req-error', function (err, res, body) {
+      assert.ifError(err)
+
+      assert.strictEqual(routeCalled, 0)
+      assert.strictEqual(errorCalled, 1)
+      assert.strictEqual(body.toString(), 'ERROR')
+      assert.strictEqual(res.statusCode, 500)
+
+      done()
+    })
+  })
 })
