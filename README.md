@@ -274,6 +274,7 @@ Key | Description | Default
 `parts` | For multipart forms, the max number of parts (fields + files) | Infinity
 `headerPairs` | For multipart forms, the max number of header key=>value pairs to parse | 2000
 `fieldNestingDepth` | Max number of nesting levels for field names (e.g. `a[b][c]` has 2 levels) | Infinity
+`fieldArrayIndexLimit` | Max numeric array index accepted inside a field name (e.g. `a[3]` uses index 3) | Infinity
 
 Specifying the limits can help protect your site against denial of service (DoS) attacks.
 
