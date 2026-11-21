@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 1.4.5-backpatch-00004
+release: 1.4.5-backpatch-00005
 baseline: v1.4.4+backpatch.baseline
 fixes:
   - cve: CVE-2025-47935
@@ -34,12 +34,20 @@ fixes:
     basis: backport
     artifacts:
       - multer
-    note: "New in this release; upstream's fix in 2.1.1. It closes the advisory: Multer Vulnerable to Denial of Service via Uncontrolled Recursion."
+    note: "Carried from 1.4.5-backpatch-00004; upstream's fix in 2.1.1. It closes the advisory: Multer Vulnerable to Denial of Service via Uncontrolled Recursion."
+  - cve: CVE-2026-5079
+    upstream_fix_url: https://github.com/expressjs/multer/commit/a192b5278f240967f5eb13dd1e9a413b4e1b6533
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-5079
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-multer/commit/2e8bf67
+    basis: backport
+    artifacts:
+      - multer
+    note: "New in this release; upstream's fix in 2.2.0. It closes the advisory: Multer vulnerable to Denial of Service via deeply nested field names."
 tests:
-  commit: 85879e181212107478a04085d8d1a1dd58f687ba
+  commit: 2e8bf67bbd184d555acb275fc90f97fa2e13a5db
   command: npm pack --ignore-scripts; the package placed in a consumer beside npmjs 1.4.4's resolved dependencies, then every test/*.js of the tested commit under mocha 3 (the tag's devDependencies, resolved by the verify run, no lockfile at the tag), each test recorded into the JUnit report
   runtime: Node.js v22.23.2, npm 10.9.8, mocha 3.5.3, macOS 27.2 arm64
-  report: multer-1.4.5-backpatch-00004-tests.zip
-  report_sha256: d72f56678191cb53a1c6919bcdf4df0b9e00b915eff28e0111175268ebbf5fee
+  report: multer-1.4.5-backpatch-00005-tests.zip
+  report_sha256: 2188ffdd404190b5d1efc7320e578b48d2c0dcd075070bbda658f133e8c33bf5
   result: pass
-  note: "upstream's mocha tests (test/*.js) against the packed package at the tested commit: 62 tests, 62 passed, 0 failed, 0 skipped. The CVE tests (test/error-handling.js), with this release's production lines reverted at the tested commit: 1 tests, 0 passed, 1 failed, 0 skipped, test files exiting non-zero: test/*.js; with them: 1 tests, 1 passed, 0 failed, 0 skipped. Built with npm pack (plain JS, no build step) in a directory named multer, 8 of npmjs's 11 files for 1.4.4 are identical; the rest are lib/make-middleware.js, lib/remove-uploaded-files.js, package.json. The archive's file-origins.yaml maps each packaged file to the commit, or names its inputs and build."
+  note: "upstream's mocha tests (test/*.js) against the packed package at the tested commit: 67 tests, 67 passed, 0 failed, 0 skipped. The CVE tests (test/nesting-depth.js), with this release's production lines reverted at the tested commit: 5 tests, 3 passed, 2 failed, 0 skipped, test files exiting non-zero: test/*.js; with them: 5 tests, 5 passed, 0 failed, 0 skipped. Built with npm pack (plain JS, no build step) in a directory named multer, 6 of npmjs's 11 files for 1.4.4 are identical; the rest are README.md, lib/make-middleware.js, lib/multer-error.js, lib/remove-uploaded-files.js, package.json. The archive's file-origins.yaml maps each packaged file to the commit, or names its inputs and build."
